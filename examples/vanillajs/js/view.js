@@ -25,6 +25,7 @@
 		this.$footer = qs('.footer');
 		this.$toggleAll = qs('.toggle-all');
 		this.$newTodo = qs('.new-todo');
+		this.$newTodoTag = qs('.new-todo-tag');
 	}
 
 	View.prototype._removeItem = function (id) {
@@ -117,6 +118,7 @@
 				self._setFilter(parameter);
 			},
 			clearNewTodo: function () {
+				self.$newTodo.value = '';
 				self.$newTodo.value = '';
 			},
 			elementComplete: function () {
