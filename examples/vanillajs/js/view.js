@@ -119,7 +119,7 @@
 			},
 			clearNewTodo: function () {
 				self.$newTodo.value = '';
-				self.$newTodo.value = '';
+				self.$newTodoTag.value = '';
 			},
 			elementComplete: function () {
 				self._elementComplete(parameter.id, parameter.completed);
@@ -152,7 +152,7 @@
 		});
 
 		$delegate(self.$todoList, 'li .edit', 'keypress', function (event) {
-			if (event.keyCode === self.ENTER_KEY) {
+			if (event.keyCode === this.ENTER_KEY) {
 				// Remove the cursor from the input when you hit enter just like if it
 				// were a real form
 				this.blur();
@@ -175,8 +175,16 @@
 	View.prototype.bind = function (event, handler) {
 		var self = this;
 		if (event === 'newTodo') {
-			$on(self.$newTodo, 'change', function () {
-				handler(self.$newTodo.value);
+			$on((self.$newTodo), 'keydown', function (event) {
+				if (event.keyCode === 13) {
+					handler(self.$newTodo.value, self.$newTodoTag.value);
+				}
+			});
+
+						$on((self.$newTodoTag), 'keydown', function (event) {
+				if (event.keyCode === 13) {
+					handler(self.$newTodo.value, self.$newTodoTag.value);
+				}
 			});
 
 		} else if (event === 'removeCompleted') {
