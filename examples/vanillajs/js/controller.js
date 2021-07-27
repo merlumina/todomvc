@@ -34,7 +34,7 @@
 		});
 
 		self.view.bind('tagEditDone', function (item) {
-			self.editTagSave(item.id, item.title);
+			self.editTagSave(item.id, item.tag);
 		});
 
 		self.view.bind('tagEditCancel', function (item) {
@@ -132,7 +132,7 @@
 		var self = this;
 		self.model.read(id, function (data) {
 			console.log(data)
-			self.view.render('editTag', {id: id, title: data[0].tag});
+			self.view.render('editTag', {id: id, tag: data[0].tag});
 		});
 	};
 
@@ -178,7 +178,7 @@
 	Controller.prototype.editTagCancel = function (id) {
 		var self = this;
 		self.model.read(id, function (data) {
-			self.view.render('editTagDone', {id: id, title: tag[0].tag});
+			self.view.render('editTagDone', {id: id, tag: data[0].tag});
 		});
 	};
 
