@@ -271,13 +271,11 @@
 
 		} else if (event === 'titleEdit') {
 			$delegate(self.$todoList, 'li label', 'dblclick', function () {
-				console.log(self._itemId(this));
 				handler({id: self._itemId(this)});
 			});
 
 		} else if (event === 'tagEdit') {
 			$delegate(self.$todoList, 'li span', 'dblclick', function () {
-				console.log(self._itemId(this));
 				handler({id: self._itemId(this)});
 			});
 
