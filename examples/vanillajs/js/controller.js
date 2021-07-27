@@ -17,16 +17,28 @@
 			self.addItem(title, tag);
 		});
 
-		self.view.bind('itemEdit', function (item) {
-			self.editItem(item.id);
+		self.view.bind('titleEdit', function (item) {
+			self.editTitle(item.id);
 		});
 
-		self.view.bind('itemEditDone', function (item) {
-			self.editItemSave(item.id, item.title);
+		self.view.bind('titleEditDone', function (item) {
+			self.editTitleSave(item.id, item.title);
 		});
 
-		self.view.bind('itemEditCancel', function (item) {
-			self.editItemCancel(item.id);
+		self.view.bind('titleEditCancel', function (item) {
+			self.editTitleCancel(item.id);
+		});
+
+		self.view.bind('tagEdit', function (item) {
+			self.editTag(item.id);
+		});
+
+		self.view.bind('tagEditDone', function (item) {
+			self.editTagSave(item.id, item.title);
+		});
+
+		self.view.bind('tagEditCancel', function (item) {
+			self.editTagCancel(item.id);
 		});
 
 		self.view.bind('itemRemove', function (item) {
@@ -108,23 +120,45 @@
 	/*
 	 * Triggers the item editing mode.
 	 */
-	Controller.prototype.editItem = function (id) {
+	Controller.prototype.editTitle = function (id) {
 		var self = this;
 		self.model.read(id, function (data) {
-			self.view.render('editItem', {id: id, title: data[0].title});
+			console.log(data)
+			self.view.render('editTitle', {id: id, title: data[0].title});
+		});
+	};
+
+		Controller.prototype.editTag = function (id) {
+		var self = this;
+		self.model.read(id, function (data) {
+			console.log(data)
+			self.view.render('editTag', {id: id, title: data[0].tag});
 		});
 	};
 
 	/*
 	 * Finishes the item editing mode successfully.
 	 */
-	Controller.prototype.editItemSave = function (id, title) {
+	Controller.prototype.editTitleSave = function (id, title) {
 		var self = this;
 		title = title.trim();
 
 		if (title.length !== 0) {
 			self.model.update(id, {title: title}, function () {
-				self.view.render('editItemDone', {id: id, title: title});
+				self.view.render('editTitleDone', {id: id, title: title});
+			});
+		} else {
+			self.removeItem(id);
+		}
+	};
+
+	Controller.prototype.editTagSave = function (id, tag) {
+		var self = this;
+		tag = tag.trim();
+
+		if (tag.length !== 0) {
+			self.model.update(id, {tag: tag}, function () {
+				self.view.render('editTagDone', {id: id, tag: tag});
 			});
 		} else {
 			self.removeItem(id);
@@ -134,10 +168,17 @@
 	/*
 	 * Cancels the item editing mode.
 	 */
-	Controller.prototype.editItemCancel = function (id) {
+	Controller.prototype.editTitleCancel = function (id) {
 		var self = this;
 		self.model.read(id, function (data) {
-			self.view.render('editItemDone', {id: id, title: data[0].title});
+			self.view.render('editTitleDone', {id: id, title: data[0].title});
+		});
+	};
+
+	Controller.prototype.editTagCancel = function (id) {
+		var self = this;
+		self.model.read(id, function (data) {
+			self.view.render('editTagDone', {id: id, title: tag[0].tag});
 		});
 	};
 

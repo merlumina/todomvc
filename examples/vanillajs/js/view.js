@@ -146,7 +146,7 @@
 			if (!this.dataset.iscanceled) {
 				handler({
 					id: self._itemId(this),
-					title: this.value
+					title: this.value,
 				});
 			}
 		});
@@ -181,7 +181,7 @@
 				}
 			});
 
-						$on((self.$newTodoTag), 'keydown', function (event) {
+			$on((self.$newTodoTag), 'keydown', function (event) {
 				if (event.keyCode === 13) {
 					handler(self.$newTodo.value, self.$newTodoTag.value);
 				}
@@ -199,6 +199,7 @@
 
 		} else if (event === 'itemEdit') {
 			$delegate(self.$todoList, 'li label', 'dblclick', function () {
+				console.log(self._itemId(this));
 				handler({id: self._itemId(this)});
 			});
 
