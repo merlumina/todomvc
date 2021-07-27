@@ -15,14 +15,17 @@
 	 * Creates a new todo model
 	 *
 	 * @param {string} [title] The title of the task
+	 * @param {string} [tag] The tag for the task
 	 * @param {function} [callback] The callback to fire after the model is created
 	 */
-	Model.prototype.create = function (title, callback) {
+	Model.prototype.create = function (title, tag, callback) {
 		title = title || '';
+		tag = tag || '';
 		callback = callback || function () {};
 
 		var newItem = {
 			title: title.trim(),
+			tag: tag.trim(),
 			completed: false
 		};
 
