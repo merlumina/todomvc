@@ -59,7 +59,7 @@
 		qs('input', listItem).checked = completed;
 	};
 
-	View.prototype._editItem = function (id, title) {
+	View.prototype._editTitle = function (id, title) {
 		var listItem = qs('[data-id="' + id + '"]');
 
 		if (!listItem) {
@@ -76,7 +76,24 @@
 		input.value = title;
 	};
 
-	View.prototype._editItemDone = function (id, title) {
+	View.prototype._editTag = function (id, tag) {
+		var listItem = qs('[data-id="' + id + '"]');
+
+		if (!listItem) {
+			return;
+		}
+
+		listItem.className = listItem.className + ' editing';
+
+		var input = document.createElement('input');
+		input.className = 'edit';
+
+		listItem.appendChild(input);
+		input.focus();
+		input.value = tag;
+	};
+
+	View.prototype._editTitleDone = function (id, title) {
 		var listItem = qs('[data-id="' + id + '"]');
 
 		if (!listItem) {
@@ -90,6 +107,23 @@
 
 		qsa('label', listItem).forEach(function (label) {
 			label.textContent = title;
+		});
+	};
+
+	View.prototype._editTagDone = function (id, tag) {
+		var listItem = qs('[data-id="' + id + '"]');
+
+		if (!listItem) {
+			return;
+		}
+
+		var input = qs('input.edit', listItem);
+		listItem.removeChild(input);
+
+		listItem.className = listItem.className.replace('editing', '');
+
+		qsa('label', listItem).forEach(function (label) {
+			label.textContent = tag;
 		});
 	};
 
@@ -124,11 +158,17 @@
 			elementComplete: function () {
 				self._elementComplete(parameter.id, parameter.completed);
 			},
-			editItem: function () {
-				self._editItem(parameter.id, parameter.title);
+			editTitle: function () {
+				self._editTitle(parameter.id, parameter.title);
 			},
-			editItemDone: function () {
-				self._editItemDone(parameter.id, parameter.title);
+			editTag: function () {
+				self._editTag(parameter.id, parameter.tag);
+			},
+			editTitleDone: function () {
+				self._editTitleDone(parameter.id, parameter.title);
+			},
+			editTagDone: function () {
+				self._editTagDone(parameter.id, parameter.tag);
 			}
 		};
 
@@ -140,7 +180,7 @@
 		return parseInt(li.dataset.id, 10);
 	};
 
-	View.prototype._bindItemEditDone = function (handler) {
+	View.prototype._bindTitleEditDone = function (handler) {
 		var self = this;
 		$delegate(self.$todoList, 'li .edit', 'blur', function () {
 			if (!this.dataset.iscanceled) {
@@ -160,7 +200,39 @@
 		});
 	};
 
-	View.prototype._bindItemEditCancel = function (handler) {
+		View.prototype._bindTagEditDone = function (handler) {
+		var self = this;
+		$delegate(self.$todoList, 'li .edit', 'blur', function () {
+			if (!this.dataset.iscanceled) {
+				handler({
+					id: self._itemId(this),
+					tag: this.tag,
+				});
+			}
+		});
+
+		$delegate(self.$todoList, 'li .edit', 'keypress', function (event) {
+			if (event.keyCode === this.ENTER_KEY) {
+				// Remove the cursor from the input when you hit enter just like if it
+				// were a real form
+				this.blur();
+			}
+		});
+	};
+
+	View.prototype._bindTitleEditCancel = function (handler) {
+		var self = this;
+		$delegate(self.$todoList, 'li .edit', 'keyup', function (event) {
+			if (event.keyCode === self.ESCAPE_KEY) {
+				this.dataset.iscanceled = true;
+				this.blur();
+
+				handler({id: self._itemId(this)});
+			}
+		});
+	};
+
+	View.prototype._bindTagEditCancel = function (handler) {
 		var self = this;
 		$delegate(self.$todoList, 'li .edit', 'keyup', function (event) {
 			if (event.keyCode === self.ESCAPE_KEY) {
@@ -197,7 +269,13 @@
 				handler({completed: this.checked});
 			});
 
-		} else if (event === 'itemEdit') {
+		} else if (event === 'titleEdit') {
+			$delegate(self.$todoList, 'li label', 'dblclick', function () {
+				console.log(self._itemId(this));
+				handler({id: self._itemId(this)});
+			});
+
+		} else if (event === 'tagEdit') {
 			$delegate(self.$todoList, 'li label', 'dblclick', function () {
 				console.log(self._itemId(this));
 				handler({id: self._itemId(this)});
@@ -216,11 +294,16 @@
 				});
 			});
 
-		} else if (event === 'itemEditDone') {
-			self._bindItemEditDone(handler);
+		} else if (event === 'titleEditDone') {
+			self._bindTitleEditDone(handler);
 
-		} else if (event === 'itemEditCancel') {
-			self._bindItemEditCancel(handler);
+		} else if (event === 'tagEditDone') {
+			self._bindTagEditDone(handler);
+
+		} else if (event === 'titleEditCancel') {
+			self._bindTitleEditCancel(handler);
+		} else if (event === 'tagEditCancel') {
+			self._bindTagEditCancel(handler);
 		}
 	};
 
