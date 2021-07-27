@@ -66,10 +66,10 @@
 			return;
 		}
 
-		listItem.className = listItem.className + ' editing';
+		listItem.className = listItem.className + ' editing-title';
 
 		var input = document.createElement('input');
-		input.className = 'edit';
+		input.className = 'edit-title';
 
 		listItem.appendChild(input);
 		input.focus();
@@ -83,10 +83,10 @@
 			return;
 		}
 
-		listItem.className = listItem.className + ' editing';
+		listItem.className = listItem.className + ' editing-tag';
 
 		var input = document.createElement('input');
-		input.className = 'edit';
+		input.className = 'edit-tag';
 
 		listItem.appendChild(input);
 		input.focus();
@@ -100,10 +100,10 @@
 			return;
 		}
 
-		var input = qs('input.edit', listItem);
+		var input = qs('input.edit-title', listItem);
 		listItem.removeChild(input);
 
-		listItem.className = listItem.className.replace('editing', '');
+		listItem.className = listItem.className.replace(' editing-title', '');
 
 		qsa('label', listItem).forEach(function (label) {
 			label.textContent = title;
@@ -117,13 +117,13 @@
 			return;
 		}
 
-		var input = qs('input.edit', listItem);
+		var input = qs('input.edit-tag', listItem);
 		listItem.removeChild(input);
 
-		listItem.className = listItem.className.replace('editing', '');
+		listItem.className = listItem.className.replace(' editing-tag', '');
 
-		qsa('label', listItem).forEach(function (label) {
-			label.textContent = tag;
+		qsa('span', listItem).forEach(function (span) {
+			span.textContent = tag;
 		});
 	};
 
@@ -182,7 +182,7 @@
 
 	View.prototype._bindTitleEditDone = function (handler) {
 		var self = this;
-		$delegate(self.$todoList, 'li .edit', 'blur', function () {
+		$delegate(self.$todoList, 'li .edit-title', 'blur', function () {
 			if (!this.dataset.iscanceled) {
 				handler({
 					id: self._itemId(this),
@@ -191,8 +191,8 @@
 			}
 		});
 
-		$delegate(self.$todoList, 'li .edit', 'keypress', function (event) {
-			if (event.keyCode === this.ENTER_KEY) {
+		$delegate(self.$todoList, 'li .edit-title', 'keypress', function (event) {
+			if (event.keyCode === 13) {
 				// Remove the cursor from the input when you hit enter just like if it
 				// were a real form
 				this.blur();
@@ -202,17 +202,17 @@
 
 		View.prototype._bindTagEditDone = function (handler) {
 		var self = this;
-		$delegate(self.$todoList, 'li .edit', 'blur', function () {
+		$delegate(self.$todoList, 'li .edit-tag', 'blur', function () {
 			if (!this.dataset.iscanceled) {
 				handler({
 					id: self._itemId(this),
-					tag: this.tag,
+					tag: this.value,
 				});
 			}
 		});
 
-		$delegate(self.$todoList, 'li .edit', 'keypress', function (event) {
-			if (event.keyCode === this.ENTER_KEY) {
+		$delegate(self.$todoList, 'li .edit-tag', 'keypress', function (event) {
+			if (event.keyCode === 13) {
 				// Remove the cursor from the input when you hit enter just like if it
 				// were a real form
 				this.blur();
@@ -222,7 +222,7 @@
 
 	View.prototype._bindTitleEditCancel = function (handler) {
 		var self = this;
-		$delegate(self.$todoList, 'li .edit', 'keyup', function (event) {
+		$delegate(self.$todoList, 'li .edit-title', 'keyup', function (event) {
 			if (event.keyCode === self.ESCAPE_KEY) {
 				this.dataset.iscanceled = true;
 				this.blur();
@@ -234,7 +234,7 @@
 
 	View.prototype._bindTagEditCancel = function (handler) {
 		var self = this;
-		$delegate(self.$todoList, 'li .edit', 'keyup', function (event) {
+		$delegate(self.$todoList, 'li .edit-tag', 'keyup', function (event) {
 			if (event.keyCode === self.ESCAPE_KEY) {
 				this.dataset.iscanceled = true;
 				this.blur();
@@ -276,7 +276,7 @@
 			});
 
 		} else if (event === 'tagEdit') {
-			$delegate(self.$todoList, 'li label', 'dblclick', function () {
+			$delegate(self.$todoList, 'li span', 'dblclick', function () {
 				console.log(self._itemId(this));
 				handler({id: self._itemId(this)});
 			});
